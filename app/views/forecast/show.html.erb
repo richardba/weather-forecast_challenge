@@ -1,0 +1,52 @@
+<div class="forecast-page">
+  <h1>Weather Forecast</h1>
+
+  <%= form_with(
+    model: @address,
+    url: forecast_path,
+    method: :get,
+    local: true
+  ) do |form| %>
+
+    <%= form.label :query, "Address" %>
+
+    <%= form.text_field(
+      :query,
+      placeholder: "Enter a city or address"
+    ) %>
+
+    <%= form.submit "Get forecast" %>
+  <% end %>
+
+  <% if @error.present? %>
+    <div class="forecast-error">
+      <%= @error %>
+    </div>
+  <% end %>
+
+  <% @forecasts.sort_by { |forecast| forecast.from_cache ? 1 : 0 }.each do |forecast| %>
+    <div
+      class="forecast"
+      data-controller="expiration"
+      data-expiration-at-value="<%= forecast.expires_at.iso8601 %>"
+    >
+      <h2>
+        Forecast for <%= forecast.address.query %>
+        <% if forecast.from_cache %>
+        (Cache)
+        <% end %>
+        
+      </h2>
+
+      <% forecast.days.each do |day| %>
+        <p>
+          <%= day[:date] %>
+          *
+          Min: <%= day[:minimum_temperature] %>°C
+          *
+          Max: <%= day[:maximum_temperature] %>°C
+        </p>
+      <% end %>
+    </div>
+  <% end %>
+</div>
