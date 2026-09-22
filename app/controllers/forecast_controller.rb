@@ -80,7 +80,6 @@ class ForecastController < ApplicationController
         Address.new(query: item["query"])
       )
 
-      # Keep the display expiration tied to the original search.
       forecast.expires_at = item["expires_at"]
 
       forecast
